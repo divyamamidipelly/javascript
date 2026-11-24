@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Fetch and Render API</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        #loading {
+            text-align: center;
+            color: blue;
+            font-size: 20px;
+            margin: 20px;
+        }
+
+        #error {
+            text-align: center;
+            color: red;
+            font-size: 18px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px #ccc;
+        }
+
+        .card h3 {
+            color: #007bff;
+            text-transform: capitalize;
+        }
+
+        .card p {
+            color: #555;
+            line-height: 1.5;
+        }
+
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>Fetch and Render API</h1>
+
+        <button onclick="fetchPosts()">Load Posts</button>
+
+        <div id="loading"></div>
+
+        <div id="error"></div>
+
+        <div class="cards" id="cards"></div>
+
+    </div>
+
+    <script>
+
+        // Fetch API Data using async and await
+        async function fetchPosts() {
+
+            let loading = document.getElementById("loading");
+
+            let error = document.getElementById("error");
+
+            let cards = document.getElementById("cards");
+
+            // Show loading message
+            loading.textContent = "Loading data...";
+
+            error.textContent = "";
+
+            cards.innerHTML = "";
+
+            try {
+
+                // Fetch data from public API
+                let response = await fetch(
+                    "https://jsonplaceholder.typicode.com/posts?_limit=10"
+                );
+
+                // Check response
+                if (!response.ok) {
+                    throw new Error("Failed to fetch data");
+                }
+
+                // Convert response into JSON
+                let data = await response.json();
+
+                // Hide loading message
+                loading.textContent = "";
+
+                // Display data as cards
+                data.forEach(function(post) {
+
+                    let card = document.createElement("div");
+
+                    card.className = "card";
+
+                    card.innerHTML = `
+                        <h3>${post.title}</h3>
+                        <p>${post.body}</p>
+                        <b>Post ID: ${post.id}</b>
+                    `;
+
+                    cards.appendChild(card);
+
+                });
+
+            }
+
+            catch (err) {
+
+                // Handle errors
+                loading.textContent = "";
+
+                error.textContent = "Error: " + err.message;
+
+            }
+
+        }
+
+        // Load API data when page opens
+        fetchPosts();
+
+    </script>
+
+</body>
+</html>
